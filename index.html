@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iKChat Ultimate Control Panel</title>
+    <style>
+        :root {
+            /* Purane Controls */
+            --rules-top: 24%;
+            --rules-left: 50%;
+            --rules-font-size: 11px;
+            --rules-font-family: 'Poppins', sans-serif;
+
+            /* Timer & Podium Controls */
+            --timer-top: 31.5%;
+            --timer-font-size: 14px; 
+            --timer-color: #FFD700;
+            --top3-group-top: 62%;      
+            --avatar-size: 70px;        
+            --frame-scale: 1.45;        
+            --top3-name-size: 12px;
+            --top3-gift-size: 10px;
+            --profile-gap: 15px;
+
+            /* --- NEW: PROFILE IMAGE ADJUSTMENT (FIT CONTROL) --- */
+            /* Inko badha-ghata kar aap image ko frame mein fit kar sakte hain */
+            --rank1-img-scale: 79%; 
+            --rank2-img-scale: 75%;
+            --rank3-img-scale: 74%;
+
+            /* Offsets */
+            --rank1-y-offset: -972px;      
+            --rank2-y-offset: -864px;      
+            --rank3-y-offset: -867px;      
+            --rank1-x-offset: 0px;      
+            --rank2-x-offset: -93px;      
+            --rank3-x-offset: 85px;      
+
+            /* List Controls */
+            --list-top: 48.8%;          
+            --list-height: 13.5%;       
+            --list-width: 43%;          
+            --list-font-size: 34px;
+
+            --btn-bottom: 474px;
+            --btn-right: 18px;
+            --gold-color: #FFD700;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; background: #000;
+            color: #fff; font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden; scroll-behavior: smooth;
+        }
+
+        .event-wrapper {
+            position: relative; 
+            width: 100%; 
+            min-height: 280vw; 
+            background: url('event.png') no-repeat top center;
+            background-size: 100% auto;
+        }
+
+        /* --- REAL COIN FALL ANIMATION --- */
+        .coin {
+            position: absolute;
+            width: 14px; height: 14px;
+            background: radial-gradient(circle at 30% 30%, #fff9b1, #ffcc00 40%, #d4a017);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.6), inset -1px -1px 2px #000;
+            pointer-events: none;
+            z-index: 5;
+            animation: coinFall linear infinite;
+        }
+
+        @keyframes coinFall {
+            0% { transform: translateY(-20px) rotateY(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            /* 1 inch approx fall (96px-120px) */
+            100% { transform: translateY(120px) rotateY(360deg); opacity: 0; }
+        }
+
+        /* DUAL RULES PANEL */
+        .rules-panel {
+            position: absolute; top: var(--rules-top); left: var(--rules-left);
+            transform: translateX(-50%); width: 85%; height: 80px; 
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.3); border-radius: 10px;
+            overflow: hidden; border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .rules-container { display: flex; gap: 15px; align-items: center; }
+        .rules-h {
+            font-family: var(--rules-font-family); font-size: var(--rules-font-size);
+            font-weight: 700; text-transform: uppercase; color: #fff; text-shadow: 1px 1px 2px #000;
+        }
+        .rules-v {
+            writing-mode: vertical-rl; text-orientation: upright; font-size: 9px;
+            font-weight: 900; color: var(--gold-color); border-left: 2px solid var(--gold-color);
+            padding-left: 5px; line-height: 1;
+        }
+
+        /* TIMER & PODIUM */
+        .timer-panel {
+            position: absolute; top: var(--timer-top); left: 50%;
+            transform: translateX(-50%); width: 100%; text-align: center;
+        }
+        #live-clock {
+            font-family: 'Courier New', monospace; font-size: var(--timer-font-size); 
+            font-weight: 900; color: var(--timer-color); background: rgba(0, 0, 0, 0.4);
+            padding: 5px 15px; border-radius: 20px;
+        }
+
+        .top-podium {
+            position: absolute; top: var(--top3-group-top); width: 100%;
+            display: flex; justify-content: center; align-items: flex-end; gap: var(--profile-gap);
+        }
+        .user-card { position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .rank-pos-0 { transform: translate(var(--rank2-x-offset), var(--rank2-y-offset)); } 
+        .rank-pos-1 { transform: translate(var(--rank1-x-offset), var(--rank1-y-offset)); } 
+        .rank-pos-2 { transform: translate(var(--rank3-x-offset), var(--rank3-y-offset)); } 
+
+        .avatar-frame {
+            position: relative; width: var(--avatar-size); height: var(--avatar-size);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .rank-top-img {
+            position: absolute; top: -45px; left: 50%;
+            transform: translateX(-50%); width: 50px; z-index: 10;
+        }
+
+        /* --- Individual Image Scale Logic --- */
+        .rank-pos-1 .avatar-img { width: var(--rank1-img-scale); height: var(--rank1-img-scale); }
+        .rank-pos-0 .avatar-img { width: var(--rank2-img-scale); height: var(--rank2-img-scale); }
+        .rank-pos-2 .avatar-img { width: var(--rank3-img-scale); height: var(--rank3-img-scale); }
+
+        .avatar-img { 
+            border-radius: 50%; object-fit: cover; 
+            z-index: 1;
+        }
+
+        .frame-overlay {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(var(--frame-scale));
+            width: 100%; height: 100%; pointer-events: none; z-index: 2;
+        }
+
+        .user-name { font-size: var(--top3-name-size); font-weight: bold; margin-top: 15px; }
+        .gift-tag { font-size: var(--top3-gift-size); color: var(--gold-color); background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 12px; }
+
+        .rankings-scroll {
+            position: absolute; top: var(--list-top); left: 50%;
+            transform: translateX(-50%); width: var(--list-width); height: var(--list-height);
+            overflow-y: auto; 
+        }
+        .rank-item {
+            display: flex; align-items: center; padding: 6px;
+            background: rgba(255, 255, 255, 0.05); margin-bottom: 4px; border-radius: 8px;
+        }
+        .rank-num { width: 20px; font-weight: 800; color: var(--gold-color); font-size: 11px; }
+        .rank-img { width: 25px; height: 25px; border-radius: 50%; margin-right: 8px; }
+        .rank-name { font-size: var(--list-font-size); font-weight: 600; flex: 1; overflow: hidden; white-space: nowrap; }
+        .rank-count { font-size: 10px; color: #4CAF50; }
+
+        ::-webkit-scrollbar { width: 0px; }
+
+        .nav-btns {
+            position: fixed; right: var(--btn-right); bottom: var(--btn-bottom);
+            display: flex; flex-direction: column; gap: 8px; z-index: 9999;
+        }
+        .n-btn {
+            width: 45px; height: 45px; border-radius: 50%; background: var(--gold-color);
+            border: 2px solid #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-btns">
+    <button class="n-btn" onclick="scrollContent('up')">▲</button>
+    <button class="n-btn" onclick="scrollContent('down')">▼</button>
+</div>
+
+<div class="event-wrapper" id="main-wrapper">
+    <div class="rules-panel">
+        <div class="rules-container">
+            <div class="rules-h">Angel Gifts Only<br>Rank 1: 3% Bonus</div>
+            <div class="rules-v">RANK RULES</div>
+            <div class="rules-h">Rank 2: 2%<br>Rank 3: 1%</div>
+        </div>
+    </div>
+
+    <div class="timer-panel">
+        <div id="live-clock">RESET IN: --:--:--</div>
+    </div>
+
+    <div class="top-podium" id="top3-anchor"></div>
+    <div class="rankings-scroll" id="list-anchor"></div>
+</div>
+
+<script>
+    // --- COIN RAIN SCRIPT ---
+    function spawnCoins() {
+        const wrapper = document.getElementById('main-wrapper');
+        const podium = document.getElementById('top3-anchor');
+        
+        setInterval(() => {
+            const coin = document.createElement('div');
+            coin.className = 'coin';
+            
+            // Podium ki width ke hisaab se coins girana
+            const rect = podium.getBoundingClientRect();
+            const randomX = Math.random() * rect.width + rect.left;
+            const startY = rect.top - 30; // Podium ke thoda upar se start
+
+            coin.style.left = randomX + 'px';
+            coin.style.top = startY + 'px';
+            
+            // Random Speed and Rotation
+            const duration = Math.random() * 1.5 + 1;
+            coin.style.animationDuration = duration + 's';
+
+            wrapper.appendChild(coin);
+
+            // 1 inch fall ke baad remove karna
+            setTimeout(() => coin.remove(), duration * 1000);
+        }, 200);
+    }
+
+    function scrollContent(direction) {
+        const amount = window.innerHeight * 0.4;
+        window.scrollBy({ top: direction === 'up' ? -amount : amount, behavior: 'smooth' });
+    }
+
+    const players = [
+        { id: 1, name: "Boss_Elite", gifts: 15200, img: "https://i.pravatar.cc/100?u=1" },
+        { id: 2, name: "King_iK", gifts: 12800, img: "https://i.pravatar.cc/100?u=2" },
+        { id: 3, name: "Queen_Rose", gifts: 10200, img: "https://i.pravatar.cc/100?u=3" },
+        { id: 4, name: "Agent_Alpha", gifts: 8500, img: "https://i.pravatar.cc/100?u=4" },
+        { id: 5, name: "Shadow_iK", gifts: 7100, img: "https://i.pravatar.cc/100?u=5" },
+        { id: 6, name: "User_VIP", gifts: 6200, img: "https://i.pravatar.cc/100?u=6" },
+        { id: 7, name: "Star_Boy", gifts: 5800, img: "https://i.pravatar.cc/100?u=7" },
+        { id: 8, name: "iK_Prince", gifts: 4500, img: "https://i.pravatar.cc/100?u=8" },
+        { id: 9, name: "Magic_X", gifts: 3200, img: "https://i.pravatar.cc/100?u=9" },
+        { id: 10, name: "Old_Player", gifts: 2900, img: "https://i.pravatar.cc/100?u=10" }
+    ];
+
+    function renderEvent() {
+        const top3Box = document.getElementById('top3-anchor');
+        const listBox = document.getElementById('list-anchor');
+        players.sort((a,b) => b.gifts - a.gifts);
+
+        const order = [1, 0, 2]; 
+        const frameFiles = ['22.png', '11.png', '33.png']; 
+        const rankTopImages = ['2.png', '1.png', '3.png']; 
+        
+        top3Box.innerHTML = '';
+        order.forEach((idx, i) => {
+            const p = players[idx];
+            top3Box.innerHTML += `
+                <div class="user-card rank-pos-${i}">
+                    <img src="${rankTopImages[i]}" class="rank-top-img">
+                    <div class="avatar-frame">
+                        <img src="${p.img}" class="avatar-img">
+                        <img src="${frameFiles[idx]}" class="frame-overlay">
+                    </div>
+                    <span class="user-name">${p.name}</span>
+                    <span class="gift-tag">👼 ${p.gifts}</span>
+                </div>
+            `;
+        });
+
+        listBox.innerHTML = '';
+        players.slice(3, 10).forEach((p, i) => {
+            listBox.innerHTML += `
+                <div class="rank-item">
+                    <div class="rank-num">${i + 4}</div>
+                    <img src="${p.img}" class="rank-img">
+                    <div class="rank-name">${p.name}</div>
+                    <div class="rank-count">👼 ${p.gifts}</div>
+                </div>
+            `;
+        });
+    }
+
+    setInterval(() => {
+        document.getElementById('live-clock').innerText = "RESET IN: " + new Date().toLocaleTimeString('en-GB');
+    }, 1000);
+
+    renderEvent();
+    spawnCoins(); // Start the coin rain
+</script>
+
+</body>
+</html>
